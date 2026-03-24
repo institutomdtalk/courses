@@ -1,9 +1,1185 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>MD Talk</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>KAIROS — MD Talk</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Raleway:wght@200;300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2e;
+    --navy-mid: #142240;
+    --navy-light: #1e3358;
+    --silver: #b8c4d0;
+    --silver-light: #dce4ec;
+    --silver-pale: #eef2f6;
+    --white: #f8f9fb;
+    --pure-white: #ffffff;
+    --accent-silver: #c9d6e3;
+    --rule: rgba(184, 196, 208, 0.3);
+    --rule-strong: rgba(184, 196, 208, 0.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--silver-light);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    -webkit-transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), -webkit-transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.hidden {
+    opacity: 0;
+    -webkit-transform: translateY(32px);
+    transform: translateY(32px);
+  }
+  .reveal-delay-1 { -webkit-transition-delay: 0.1s; transition-delay: 0.1s; }
+  .reveal-delay-2 { -webkit-transition-delay: 0.22s; transition-delay: 0.22s; }
+  .reveal-delay-3 { -webkit-transition-delay: 0.36s; transition-delay: 0.36s; }
+  .reveal-delay-4 { -webkit-transition-delay: 0.5s; transition-delay: 0.5s; }
+  .reveal-delay-5 { -webkit-transition-delay: 0.64s; transition-delay: 0.64s; }
+
+  /* ── HEADER / NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    padding: 28px 60px;
+    padding-left: calc(60px + env(safe-area-inset-left));
+    padding-right: calc(60px + env(safe-area-inset-right));
+    background: linear-gradient(to bottom, rgba(13,27,46,0.95) 0%, rgba(13,27,46,0) 100%);
+    -webkit-transition: background 0.4s;
+    transition: background 0.4s;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  nav.scrolled {
+    background: rgba(13,27,46,0.97);
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 60px;
+    padding-left: calc(60px + env(safe-area-inset-left));
+    padding-right: calc(60px + env(safe-area-inset-right));
+  }
+  .nav-logo {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.45em;
+    color: var(--silver);
+    text-transform: uppercase;
+  }
+  .nav-logo span {
+    font-weight: 400;
+    color: var(--pure-white);
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--pure-white); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: -webkit-fill-available;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 120px 40px 80px;
+    overflow: hidden;
+  }
+
+  /* geometric background lines */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(184,196,208,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 50% 80%, rgba(30,51,88,0.6) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(5.5rem, 14vw, 12rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--pure-white);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--silver-light);
+  }
+
+  .hero-subtitle-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-subtitle-row .rule-line {
+    width: 48px;
+    height: 1px;
+    background: var(--silver);
+    opacity: 0.5;
+  }
+  .hero-subtitle {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.72rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+
+  .hero-descriptor {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-style: italic;
+    color: var(--silver-light);
+    max-width: 580px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.95s forwards;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease 2s forwards;
+  }
+  .hero-scroll-indicator span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--silver), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── HORIZONTAL DIVIDER ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--rule);
+    margin: 0;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    padding: 120px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .full-bleed {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 56px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--silver);
+    opacity: 0.5;
+  }
+
+  /* ── CONCEITO ── */
+  .conceito-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .conceito-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    line-height: 1.15;
+    color: var(--pure-white);
+    letter-spacing: -0.01em;
+  }
+  .conceito-heading em {
+    font-style: italic;
+    color: var(--accent-silver);
+  }
+  .conceito-body {
+    padding-top: 8px;
+  }
+  .conceito-body p {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--silver-light);
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+  .conceito-body p:last-child { margin-bottom: 0; }
+
+  /* ── KAIROS MEANING ── */
+  .kairos-meaning {
+    background: var(--navy-mid);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 100px 60px;
+  }
+  .kairos-meaning-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .kairos-greek {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 300;
+    color: rgba(184,196,208,0.15);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .kairos-greek-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.4;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .kairos-definition {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    font-style: italic;
+    color: var(--silver-light);
+    line-height: 1.6;
+  }
+  .kairos-definition strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--pure-white);
+  }
+
+  /* ── ESTRUTURA / PILARES ── */
+  .pilares-header {
+    margin-bottom: 80px;
+  }
+  .pilares-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--pure-white);
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+  .pilares-intro {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--silver);
+    max-width: 560px;
+  }
+
+  .pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--rule);
+  }
+  .pilar-card {
+    background: var(--navy);
+    padding: 56px 48px;
+    transition: background 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pilar-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--silver);
+    opacity: 0.4;
+    transition: height 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .pilar-card:hover::before { height: 100%; }
+  .pilar-card:hover { background: var(--navy-mid); }
+
+  .pilar-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: rgba(184,196,208,0.1);
+    line-height: 1;
+    margin-bottom: 28px;
+    letter-spacing: -0.04em;
+  }
+  .pilar-title-en {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 10px;
+  }
+  .pilar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    color: var(--pure-white);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  .pilar-desc {
+    font-size: 0.88rem;
+    line-height: 1.85;
+    color: var(--silver-light);
+    font-weight: 300;
+  }
+
+  /* ── CURADORIA SECTION ── */
+  .curadoria-section {
+    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 110px 60px;
+  }
+  .curadoria-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .curadoria-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 64px;
+  }
+  .curadoria-left {
+    border-left: 1px solid var(--rule-strong);
+    padding-left: 48px;
+  }
+  .curadoria-lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 300;
+    color: var(--pure-white);
+    line-height: 1.3;
+    margin-bottom: 24px;
+  }
+  .curadoria-lead em { font-style: italic; color: var(--accent-silver); }
+  .curadoria-body {
+    font-size: 0.9rem;
+    line-height: 1.85;
+    color: var(--silver-light);
+  }
+  .curadoria-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .skill-item {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 20px;
+    align-items: center;
+    padding: 20px 24px;
+    background: rgba(13,27,46,0.5);
+    border: 1px solid var(--rule);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .skill-item:hover {
+    border-color: var(--rule-strong);
+    background: rgba(13,27,46,0.8);
+  }
+  .skill-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    background: rgba(184,196,208,0.08);
+    border: 1px solid var(--rule);
+    padding: 5px 10px;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+  }
+  .skill-name {
+    font-size: 0.88rem;
+    color: var(--silver-light);
+    line-height: 1.6;
+  }
+  .skill-name strong {
+    color: var(--pure-white);
+    font-weight: 400;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  /* ── INVESTMENT / PRICING ── */
+  .investment-section {
+    padding: 120px 60px;
+  }
+  .investment-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .investment-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    align-items: end;
+  }
+  .investment-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--pure-white);
+    line-height: 1.1;
+  }
+  .investment-note {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--silver);
+  }
+
+  .pricing-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+    margin-bottom: 2px;
+  }
+  .price-cell {
+    background: var(--navy-mid);
+    padding: 56px 52px;
+    position: relative;
+  }
+  .price-cell.highlight {
+    background: var(--navy-light);
+  }
+  .price-cell-label {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 20px;
+  }
+  .price-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    color: var(--pure-white);
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .price-period {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+    margin-bottom: 28px;
+  }
+  .price-desc {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--silver-light);
+  }
+  .price-total-row {
+    background: var(--navy-light);
+    border: 1px solid var(--rule-strong);
+    padding: 40px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .price-total-label {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+  .price-total-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 2.8rem;
+    color: var(--pure-white);
+    letter-spacing: -0.02em;
+  }
+  .price-total-value small {
+    font-size: 1rem;
+    opacity: 0.5;
+    margin-left: 8px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    letter-spacing: 0.2em;
+  }
+
+  /* ── BANKING ── */
+  .banking-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    margin-top: 40px;
+  }
+  .banking-cell {
+    background: var(--navy);
+    padding: 36px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .banking-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--rule-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .banking-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--silver);
+    fill: none;
+    stroke-width: 1.5;
+  }
+  .banking-text {
+    font-size: 0.85rem;
+    color: var(--silver-light);
+  }
+  .banking-text strong {
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 4px;
+  }
+
+  /* ── POLÍTICA ── */
+  .politica-section {
+    background: var(--navy-mid);
+    border-top: 1px solid var(--rule);
+    padding: 90px 60px;
+  }
+  .politica-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .politica-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem;
+    font-weight: 300;
+    color: rgba(184,196,208,0.08);
+    line-height: 1;
+    text-align: center;
+  }
+  .politica-number span {
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--silver);
+    opacity: 0.4;
+    text-align: center;
+    margin-top: 8px;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+  .politica-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 300;
+    color: var(--pure-white);
+    margin-bottom: 20px;
+  }
+  .politica-body {
+    font-size: 0.9rem;
+    line-height: 1.85;
+    color: var(--silver-light);
+  }
+  .politica-highlight {
+    display: inline;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--accent-silver);
+  }
+
+  /* ── CICLO LABEL ── */
+  .ciclo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--rule-strong);
+    padding: 10px 20px;
+    margin-top: 28px;
+  }
+  .ciclo-badge span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+  .ciclo-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--silver);
+    opacity: 0.4;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 64px 60px;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    position: relative;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 2rem;
+    color: var(--pure-white);
+    letter-spacing: 0.08em;
+  }
+  .footer-meta {
+    text-align: right;
+  }
+  .footer-author {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .footer-taglines {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.35;
+    line-height: 2;
+  }
+  .footer-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  .footer-center-line {
+    width: 1px;
+    height: 32px;
+    background: var(--rule-strong);
+    margin: 0 auto 16px;
+  }
+  .footer-md {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.4;
+  }
+
+  /* ── ANIMATIONS ── */
+  @-webkit-keyframes fadeUp {
+    from { opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px); }
+    to   { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @-webkit-keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; -webkit-transform: scaleY(1); transform: scaleY(1); }
+    50% { opacity: 0.7; -webkit-transform: scaleY(1.1); transform: scaleY(1.1); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 0.7; transform: scaleY(1.1); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 22px 28px; padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
+    nav.scrolled { padding: 14px 28px; padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
+    .nav-links { display: none; }
+    section { padding: 80px 28px; }
+    .conceito-grid,
+    .kairos-meaning-inner,
+    .curadoria-grid,
+    .investment-header,
+    .politica-inner { grid-template-columns: 1fr; gap: 48px; }
+    .pilares-grid { grid-template-columns: 1fr; }
+    .pricing-board { grid-template-columns: 1fr; }
+    .banking-row { grid-template-columns: 1fr; }
+    footer { -webkit-flex-direction: column; flex-direction: column; gap: 40px; text-align: center; padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); padding-bottom: calc(48px + env(safe-area-inset-bottom)); }
+    .footer-meta { text-align: center; }
+    .footer-center { position: static; -webkit-transform: none; transform: none; }
+    .kairos-meaning { padding: 80px 28px; }
+    .curadoria-section { padding: 80px 28px; }
+    .politica-section { padding: 80px 28px; }
+    .investment-section { padding: 80px 28px; }
+    .price-total-row { -webkit-flex-direction: column; flex-direction: column; gap: 20px; text-align: center; }
+    /* iOS tap highlight */
+    .pilar-card, .skill-item, .banking-cell { -webkit-tap-highlight-color: transparent; }
+    /* Prevent font size bump on landscape */
+    .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
+  }
+</style>
 </head>
 <body>
-  <h1>MD Talk está no ar 🚀</h1>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-logo"><span>KAIROS</span> &nbsp;·&nbsp; MD Talk</div>
+  <ul class="nav-links">
+    <li><a href="#conceito">Conceito</a></li>
+    <li><a href="#estrutura">Estrutura</a></li>
+    <li><a href="#curadoria">Curadoria</a></li>
+    <li><a href="#investimento">Investimento</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">MD Talk &nbsp;·&nbsp; Executive Medical Communication</p>
+  <h1 class="hero-title">K<em>ai</em>ros</h1>
+  <div class="hero-subtitle-row">
+    <div class="rule-line"></div>
+    <p class="hero-subtitle">High-Performance Linguistics &nbsp;·&nbsp; 2026</p>
+    <div class="rule-line"></div>
+  </div>
+  <p class="hero-descriptor">O programa de comunicação médica em inglês para quem não tem margem para ambiguidade.</p>
+  <div class="hero-scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- KAIROS MEANING -->
+<div class="kairos-meaning" id="conceito">
+  <div class="kairos-meaning-inner">
+    <div class="reveal">
+      <div class="kairos-greek">Καιρός</div>
+      <div class="kairos-greek-label">Grego antigo</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p class="kairos-definition">
+        <strong>Kairos</strong> — o momento certo, a oportunidade precisa, o instante em que ação e linguagem convergem com perfeita oportunidade. Não tempo cronológico: <em>tempo qualitativo.</em> O momento em que a palavra certa, dita com precisão, determina o desfecho.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEITO -->
+<section>
+  <div class="conceito-grid">
+    <div class="reveal">
+      <div class="section-label">Sobre o programa</div>
+      <h2 class="conceito-heading">Conversação de alto nível.<br><em>Sem método genérico.</em></h2>
+    </div>
+    <div class="conceito-body reveal reveal-delay-2">
+      <p>KAIROS é um programa de comunicação médica em inglês construído inteiramente sobre a realidade do aluno — sua especialidade, seu cenário clínico, seus objetivos profissionais, sua voz.</p>
+      <p>Quatro aulas semanais de 25 minutos cada, voltadas exclusivamente à prática oral e, quando necessário, à escrita. Sem teoria redundante. Sem conteúdo de prateleira. Cada sessão é conduzida com foco em posicionamento, pronúncia e correção em tempo real — três dimensões que definem a credibilidade de um médico falando inglês em contexto de alto desempenho.</p>
+      <p>A rota é definida e ajustada continuamente, com temas extraídos da vida pessoal e profissional de cada aluno.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ESTRUTURA / PILARES -->
+<section id="estrutura">
+  <div class="pilares-header reveal">
+    <div class="section-label">Arquitetura do programa</div>
+    <h2 class="pilares-title">Quatro sessões.<br>Uma rota personalizada.</h2>
+    <p class="pilares-intro">Cada aula é um laboratório de performance comunicativa. A correção acontece em tempo real, em três eixos simultâneos.</p>
+  </div>
+  <div class="pilares-grid">
+    <div class="pilar-card reveal reveal-delay-1">
+      <div class="pilar-number">01</div>
+      <div class="pilar-title-en">Real-time correction</div>
+      <h3 class="pilar-title">Correção Imediata</h3>
+      <p class="pilar-desc">Hard skills (gramática, estrutura, uso), posicionamento comunicativo e pronúncia são corrigidos no exato momento da produção — não em retrospecto. A memória muscular da língua se forma no instante da correção.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-2">
+      <div class="pilar-number">02</div>
+      <div class="pilar-title-en">Route definition</div>
+      <h3 class="pilar-title">Definição de Rota</h3>
+      <p class="pilar-desc">A progressão não segue um currículo fixo. Ela é definida a partir do diagnóstico contínuo do aluno — o que precisa ser resolvido esta semana, este mês, neste ciclo — e ajustada a cada sessão.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-3">
+      <div class="pilar-number">03</div>
+      <div class="pilar-title-en">Personal & professional themes</div>
+      <h3 class="pilar-title">Temas com Relevância Real</h3>
+      <p class="pilar-desc">Os conteúdos das aulas são extraídos da vida do aluno: casos clínicos, publicações, apresentações, entrevistas, viagens, conferências, rotina hospitalar. Nada de role plays artificiais.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-4">
+      <div class="pilar-number">04</div>
+      <div class="pilar-title-en">Writing, when required</div>
+      <h3 class="pilar-title">Escrita Sob Demanda</h3>
+      <p class="pilar-desc">A habilidade escrita é trabalhada quando o aluno a necessita: e-mails clínicos, abstracts, cartas de apresentação, comunicações formais. Sempre com contexto real, nunca como exercício isolado.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CURADORIA -->
+<div class="curadoria-section" id="curadoria">
+  <div class="curadoria-inner">
+    <div class="section-label reveal">Além das aulas</div>
+    <div class="curadoria-grid">
+      <div class="curadoria-left reveal reveal-delay-1">
+        <h2 class="curadoria-lead">Curadoria semanal.<br><em>Criada para você,<br>entregue toda semana.</em></h2>
+        <p class="curadoria-body">As hard skills que sustentam a performance oral são desenvolvidas ao longo da semana por meio de uma curadoria criada especificamente para cada aluno. Não é um banco de exercícios. É um sistema de remessa semanal — materiais selecionados e produzidos com base no perfil, na especialidade e nas lacunas identificadas em aula.</p>
+      </div>
+      <div class="curadoria-skills reveal reveal-delay-2">
+        <div class="skill-item">
+          <div class="skill-tag">Grammar</div>
+          <div class="skill-name"><strong>Hard Skills Gramaticais</strong>Estruturas de alta frequência no inglês médico, com exemplos da especialidade do aluno.</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-tag">Listening</div>
+          <div class="skill-name"><strong>Escuta Clínica</strong>Seleção de áudios e vídeos médicos com densidade linguística adequada ao nível do aluno.</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-tag">Vocabulary</div>
+          <div class="skill-name"><strong>Vocabulário Especializado</strong>Listas, colocações e expressões de alto rendimento no contexto de atuação do aluno.</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-tag">Reading</div>
+          <div class="skill-name"><strong>Leitura Médica</strong>Artigos, abstracts e guidelines selecionados com foco na área de especialização.</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-tag">Case Studies</div>
+          <div class="skill-name"><strong>Estudos de Caso</strong>Casos clínicos em inglês para desenvolvimento simultâneo de raciocínio e linguagem.</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-tag">Hedging</div>
+          <div class="skill-name"><strong>Técnicas de Hedging</strong>Linguagem de mitigação e posicionamento — essencial para comunicação clínica e científica.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVESTIMENTO -->
+<div class="investment-section" id="investimento">
+  <div class="investment-inner">
+    <div class="investment-header">
+      <div class="reveal">
+        <div class="section-label">Investimento</div>
+        <h2 class="investment-title">Banking<br>&amp; Settlement</h2>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="investment-note">Valores e condições vigentes para o Ciclo de 2026. O programa opera em vínculo mensal recorrente. Abaixo, a composição do investimento para alunos MD Talk.</p>
+        <div class="ciclo-badge">
+          <div class="ciclo-dot"></div>
+          <span>Ciclo 2026 &nbsp;·&nbsp; Valores em vigor</span>
+          <div class="ciclo-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-board reveal">
+      <div class="price-cell">
+        <div class="price-cell-label">Aulas · 4 sessões semanais</div>
+        <div class="price-value">R$ 1.800</div>
+        <div class="price-period">por mês</div>
+        <p class="price-desc">Quatro encontros semanais de 25 minutos, com foco exclusivo em conversação e escrita sob demanda. Inclui correção em tempo real (hard skills, posicionamento e pronúncia) e definição contínua de rota.</p>
+      </div>
+      <div class="price-cell highlight">
+        <div class="price-cell-label">Curadoria · Remessa semanal</div>
+        <div class="price-value">R$ 500</div>
+        <div class="price-period">por mês · valor MD Talk</div>
+        <p class="price-desc">Material produzido especificamente para o aluno: gramática, escuta, vocabulário, leitura, estudos de caso e técnicas de hedging. Entrega semanal, curada com base no perfil e no progresso em aula.</p>
+      </div>
+    </div>
+
+    <div class="price-total-row reveal reveal-delay-1">
+      <div class="price-total-label">Total mensal · Aluno MD Talk</div>
+      <div class="price-total-value">R$ 2.300 <small>/ mês</small></div>
+    </div>
+
+    <div class="banking-row reveal reveal-delay-2">
+      <div class="banking-cell">
+        <div class="banking-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        </div>
+        <div class="banking-text">
+          <strong>Credit Card</strong>
+          Cartão de crédito
+        </div>
+      </div>
+      <div class="banking-cell">
+        <div class="banking-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="banking-text">
+          <strong>PIX</strong>
+          Transferência instantânea
+        </div>
+      </div>
+      <div class="banking-cell">
+        <div class="banking-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="banking-text">
+          <strong>Wire Transfer</strong>
+          Transferência bancária
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- POLÍTICA DE CANCELAMENTO -->
+<div class="politica-section">
+  <div class="politica-inner">
+    <div class="reveal">
+      <div class="politica-number">
+        21
+        <span>dias</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="section-label">Política de cancelamento</div>
+      <h3 class="politica-title">Vínculo mensal recorrente.</h3>
+      <p class="politica-body">O programa KAIROS opera em regime de <span class="politica-highlight">vínculo mensal recorrente</span>. O cancelamento é simples e sem burocracia — requer apenas comunicação prévia de <span class="politica-highlight">21 dias corridos</span>, garantindo continuidade e planejamento adequado para ambas as partes.</p>
+      <p class="politica-body" style="margin-top: 16px; font-size: 0.82rem; opacity: 0.7;">Valores e condições vigentes para o Ciclo de 2026.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo reveal">KAIROS</div>
+  <div class="footer-center reveal reveal-delay-2">
+    <div class="footer-center-line"></div>
+    <div class="footer-md">MD Talk</div>
+  </div>
+  <div class="footer-meta reveal reveal-delay-3">
+    <div class="footer-author">Desenvolvido por Thaiana Martignoni Faria</div>
+    <div class="footer-taglines">
+      Executive Medical Communication in English<br>
+      High-Performance Linguistics
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll behavior
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // iOS vh fix
+  function setVh() {
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  setVh();
+  window.addEventListener('resize', setVh, { passive: true });
+
+  // Scroll reveal — JS applies .hidden AFTER load so content is never stuck invisible
+  document.addEventListener('DOMContentLoaded', function () {
+    var reveals = document.querySelectorAll('.reveal');
+
+    // Step 1: hide them via JS (not CSS), so no JS = everything visible
+    reveals.forEach(function(el) {
+      el.classList.add('hidden');
+    });
+
+    // Step 2: reveal with IntersectionObserver or scroll fallback
+    function revealEl(el) {
+      el.classList.remove('hidden');
+      el.classList.add('visible');
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            revealEl(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+
+      reveals.forEach(function(el) { observer.observe(el); });
+    } else {
+      // Fallback: show everything immediately
+      reveals.forEach(revealEl);
+    }
+
+    // Safety net: after 3s, force-show anything still hidden (iOS edge case)
+    setTimeout(function() {
+      document.querySelectorAll('.reveal.hidden').forEach(revealEl);
+    }, 3000);
+  });
+</script>
+
 </body>
 </html>
