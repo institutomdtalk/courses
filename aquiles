@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>AQUILES — MD Talk</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Raleway:wght@200;300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:         #0d1b2e;
+    --navy-mid:     #142240;
+    --navy-light:   #1e3358;
+    --silver:       #b8c4d0;
+    --silver-light: #dce4ec;
+    --silver-pale:  #eef2f6;
+    --white:        #f8f9fb;
+    --pure-white:   #ffffff;
+    --accent-silver:#c9d6e3;
+    --rule:         rgba(184, 196, 208, 0.3);
+    --rule-strong:  rgba(184, 196, 208, 0.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: #0d1b2e;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--silver-light);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    -webkit-transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), -webkit-transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.hidden {
+    opacity: 0;
+    -webkit-transform: translateY(32px);
+    transform: translateY(32px);
+  }
+  .reveal-delay-1 { -webkit-transition-delay: 0.1s;  transition-delay: 0.1s; }
+  .reveal-delay-2 { -webkit-transition-delay: 0.22s; transition-delay: 0.22s; }
+  .reveal-delay-3 { -webkit-transition-delay: 0.36s; transition-delay: 0.36s; }
+  .reveal-delay-4 { -webkit-transition-delay: 0.5s;  transition-delay: 0.5s; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    padding: 28px 60px;
+    padding-left: calc(60px + env(safe-area-inset-left));
+    padding-right: calc(60px + env(safe-area-inset-right));
+    background: linear-gradient(to bottom, rgba(13,27,46,0.95) 0%, rgba(13,27,46,0) 100%);
+    -webkit-transition: background 0.4s, padding 0.4s;
+    transition: background 0.4s, padding 0.4s;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  nav.scrolled {
+    background: rgba(13,27,46,0.97);
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 60px;
+    padding-left: calc(60px + env(safe-area-inset-left));
+    padding-right: calc(60px + env(safe-area-inset-right));
+  }
+  .nav-logo {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.45em;
+    color: var(--silver);
+    text-transform: uppercase;
+  }
+  .nav-logo span { font-weight: 400; color: var(--pure-white); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--pure-white); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    background-color: var(--navy);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 120px 40px 80px;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(184,196,208,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 50% 80%, rgba(30,51,88,0.6) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 40px;
+    opacity: 0;
+    -webkit-animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+    position: relative; z-index: 2;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(5.5rem, 14vw, 12rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--pure-white);
+    margin-bottom: 16px;
+    opacity: 0;
+    -webkit-animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+    animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+    position: relative; z-index: 2;
+  }
+  .hero-title em { font-style: italic; color: var(--silver-light); }
+  .hero-subtitle-row {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 56px;
+    opacity: 0;
+    -webkit-animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+    position: relative; z-index: 2;
+  }
+  .hero-subtitle-row .rule-line { width: 48px; height: 1px; background: var(--silver); opacity: 0.5; }
+  .hero-subtitle {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.72rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+  .hero-descriptor {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-style: italic;
+    color: var(--silver-light);
+    max-width: 580px;
+    line-height: 1.7;
+    opacity: 0;
+    -webkit-animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.95s forwards;
+    animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.95s forwards;
+    position: relative; z-index: 2;
+  }
+  .hero-scroll-indicator {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    -webkit-animation: fadeIn 1s ease 2s forwards;
+    animation: fadeIn 1s ease 2s forwards;
+    z-index: 2;
+  }
+  .hero-scroll-indicator span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--silver), transparent);
+    -webkit-animation: scrollPulse 2s ease-in-out infinite;
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── DIVIDERS ── */
+  .section-divider { width: 100%; height: 1px; background: var(--rule); }
+
+  /* ── SECTION ── */
+  section {
+    position: relative;
+    padding: 120px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--navy);
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 56px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 20px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--silver);
+    opacity: 0.5;
+  }
+
+  /* ── INTRO / CONCEITO ── */
+  .conceito-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    -webkit-align-items: start;
+    align-items: start;
+  }
+  .conceito-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    line-height: 1.15;
+    color: var(--pure-white);
+    letter-spacing: -0.01em;
+  }
+  .conceito-heading em { font-style: italic; color: var(--accent-silver); }
+  .conceito-body p {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--silver-light);
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+  .conceito-body p:last-child { margin-bottom: 0; }
+
+  /* ── PLATO CALLOUT — navy-mid band ── */
+  .plato-band {
+    background: var(--navy-mid);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 100px 60px;
+  }
+  .plato-band-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 80px;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .plato-label-large {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.5rem;
+    font-weight: 300;
+    color: rgba(184,196,208,0.12);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .plato-label-sub {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.35;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .plato-definition {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    font-style: italic;
+    color: var(--silver-light);
+    line-height: 1.6;
+  }
+  .plato-definition strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--pure-white);
+  }
+
+  /* ── CONSEQUENCES GRID ── */
+  .consequences-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    margin-top: 0;
+  }
+  .consequence-card {
+    background: var(--navy);
+    padding: 52px 40px;
+    position: relative;
+    overflow: hidden;
+    -webkit-transition: background 0.4s;
+    transition: background 0.4s;
+  }
+  .consequence-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 0;
+    background: var(--silver);
+    opacity: 0.4;
+    -webkit-transition: height 0.5s cubic-bezier(0.22,1,0.36,1);
+    transition: height 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .consequence-card:hover::before { height: 100%; }
+  .consequence-card:hover { background: var(--navy-mid); }
+  .consequence-vs {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+  .consequence-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--silver-light);
+    line-height: 1.6;
+  }
+  .consequence-text strong { font-style: normal; color: var(--pure-white); font-weight: 500; }
+
+  /* ── 13 PONTOS BLOCK ── */
+  .pontos-block {
+    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 120px 60px;
+  }
+  .pontos-inner { max-width: 1200px; margin: 0 auto; }
+  .pontos-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    -webkit-align-items: end;
+    align-items: end;
+  }
+  .pontos-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--pure-white);
+    line-height: 1.1;
+  }
+  .pontos-title em { font-style: italic; color: var(--accent-silver); }
+  .pontos-title span {
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--silver);
+    font-weight: 300;
+    font-style: normal;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+  .pontos-body { font-size: 0.9rem; line-height: 1.9; color: var(--silver-light); }
+
+  /* ghost numeral */
+  .pontos-numero {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(10rem, 22vw, 20rem);
+    color: rgba(184,196,208,0.05);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    text-align: center;
+    margin: 16px 0 56px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* manifesto cards */
+  .pontos-manifesto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+  }
+  .manifesto-item {
+    background: var(--navy-mid);
+    padding: 52px 48px;
+    position: relative;
+    overflow: hidden;
+    -webkit-transition: background 0.4s;
+    transition: background 0.4s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .manifesto-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 0;
+    background: var(--silver);
+    opacity: 0.4;
+    -webkit-transition: height 0.5s cubic-bezier(0.22,1,0.36,1);
+    transition: height 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .manifesto-item:hover::before { height: 100%; }
+  .manifesto-item:hover { background: var(--navy-light); }
+  .manifesto-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: rgba(184,196,208,0.08);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -0.04em;
+  }
+  .manifesto-text { font-size: 0.9rem; color: var(--silver-light); line-height: 1.85; }
+  .manifesto-text strong {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--pure-white);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  /* ── FORMATO ── */
+  .formato-section {
+    background: var(--navy);
+    padding: 120px 60px;
+  }
+  .formato-inner { max-width: 1200px; margin: 0 auto; }
+  .formato-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 56px;
+    -webkit-align-items: start;
+    align-items: start;
+  }
+  .formato-left {
+    border-left: 1px solid var(--rule-strong);
+    padding-left: 48px;
+  }
+  .formato-lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+    font-weight: 300;
+    color: var(--pure-white);
+    line-height: 1.2;
+    margin-bottom: 28px;
+  }
+  .formato-lead em { font-style: italic; color: var(--accent-silver); }
+  .formato-body { font-size: 0.9rem; line-height: 1.9; color: var(--silver-light); }
+
+  .formato-specs {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .spec-item {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    background: rgba(13,27,46,0.5);
+    border: 1px solid var(--rule);
+    -webkit-transition: border-color 0.3s, background 0.3s;
+    transition: border-color 0.3s, background 0.3s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .spec-item:hover {
+    border-color: var(--rule-strong);
+    background: rgba(13,27,46,0.8);
+  }
+  .spec-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    background: rgba(184,196,208,0.08);
+    border: 1px solid var(--rule);
+    padding: 5px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 110px;
+    text-align: center;
+  }
+  .spec-content { font-size: 0.88rem; color: var(--silver-light); line-height: 1.6; }
+  .spec-content strong { color: var(--pure-white); font-weight: 400; display: block; margin-bottom: 2px; }
+
+  /* ── INVESTMENT ── */
+  .investment-section { padding: 120px 60px; background: var(--navy); }
+  .investment-inner { max-width: 1200px; margin: 0 auto; }
+  .investment-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    -webkit-align-items: end;
+    align-items: end;
+  }
+  .investment-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--pure-white);
+    line-height: 1.1;
+  }
+  .investment-note { font-size: 0.88rem; line-height: 1.8; color: var(--silver); }
+
+  /* pricing board */
+  .pricing-board {
+    border: 1px solid var(--rule-strong);
+    background: var(--navy-mid);
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-board::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--silver), var(--accent-silver), var(--silver), transparent);
+    opacity: 0.4;
+  }
+  .pricing-main {
+    padding: 64px 64px 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    -webkit-align-items: start;
+    align-items: start;
+    border-bottom: 1px solid var(--rule);
+  }
+  .pricing-label {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.65;
+    margin-bottom: 20px;
+  }
+  .pricing-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    color: var(--pure-white);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .pricing-period {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .pricing-installment {
+    padding: 28px 36px;
+    border: 1px solid var(--rule);
+    background: rgba(13,27,46,0.5);
+    -webkit-align-self: center;
+    align-self: center;
+    text-align: center;
+    min-width: 200px;
+  }
+  .inst-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 12px;
+  }
+  .inst-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--silver-light);
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .inst-detail {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    color: var(--silver);
+    opacity: 0.45;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .pricing-footer {
+    padding: 32px 64px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 16px;
+  }
+  .liberacao-badge {
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--rule-strong);
+    padding: 9px 18px;
+  }
+  .liberacao-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--silver-light);
+    -webkit-animation: pulse 2.5s ease-in-out infinite;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  .liberacao-badge span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--silver-light);
+  }
+  .ciclo-badge {
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    border: 1px solid var(--rule);
+    padding: 9px 18px;
+    margin-left: auto;
+  }
+  .ciclo-badge span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.57rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+
+  /* banking */
+  .banking-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    margin-top: 32px;
+  }
+  .banking-cell {
+    background: var(--navy-mid);
+    padding: 32px 36px;
+    border-left: 2px solid transparent;
+    -webkit-transition: background 0.3s, border-color 0.3s;
+    transition: background 0.3s, border-color 0.3s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .banking-cell:hover { background: var(--navy-light); border-left-color: var(--silver); }
+  .banking-text strong {
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--silver-light);
+    margin-bottom: 4px;
+  }
+  .banking-text { font-size: 0.85rem; color: var(--silver); }
+
+  /* ciclo badge standalone */
+  .ciclo-standalone {
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--rule-strong);
+    padding: 10px 20px;
+    margin-top: 28px;
+  }
+  .ciclo-standalone span {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+  .ciclo-dot { width: 5px; height: 5px; background: var(--silver); opacity: 0.4; }
+
+  /* estorno notice */
+  .estorno-notice {
+    margin-top: 28px;
+    padding: 22px 28px;
+    border: 1px solid var(--rule);
+    background: rgba(13,27,46,0.4);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    gap: 18px;
+  }
+  .estorno-notice .notice-line {
+    width: 2px; height: 32px;
+    background: var(--silver);
+    opacity: 0.2;
+    flex-shrink: 0;
+  }
+  .estorno-notice p { font-size: 0.83rem; color: var(--silver); line-height: 1.7; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    border-top: 1px solid var(--rule);
+    padding: 64px 60px;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    padding-left: calc(60px + env(safe-area-inset-left));
+    padding-right: calc(60px + env(safe-area-inset-right));
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    position: relative;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 2.2rem;
+    color: var(--pure-white);
+    letter-spacing: 0.06em;
+  }
+  .footer-center {
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  .footer-center-line {
+    width: 1px; height: 32px;
+    background: var(--rule-strong);
+    margin: 0 auto 16px;
+  }
+  .footer-md {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.4;
+  }
+  .footer-meta { text-align: right; }
+  .footer-author {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .footer-taglines {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 200;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--silver);
+    opacity: 0.35;
+    line-height: 2;
+  }
+
+  /* ── KEYFRAMES ── */
+  @-webkit-keyframes fadeUp {
+    from { opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px); }
+    to   { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @-webkit-keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @-webkit-keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; -webkit-transform: scaleY(1); transform: scaleY(1); }
+    50% { opacity: 0.7; -webkit-transform: scaleY(1.1); transform: scaleY(1.1); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 0.7; transform: scaleY(1.1); }
+  }
+  @-webkit-keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 22px 24px; padding-left: calc(24px + env(safe-area-inset-left)); padding-right: calc(24px + env(safe-area-inset-right)); }
+    nav.scrolled { padding: 14px 24px; padding-left: calc(24px + env(safe-area-inset-left)); padding-right: calc(24px + env(safe-area-inset-right)); }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .conceito-grid, .plato-band-inner, .pontos-header, .formato-grid, .investment-header { grid-template-columns: 1fr; gap: 48px; }
+    .consequences-grid, .pontos-manifesto, .banking-row { grid-template-columns: 1fr; }
+    .pontos-block, .formato-section, .investment-section { padding: 80px 24px; }
+    .plato-band { padding: 80px 24px; }
+    .pricing-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 28px 32px; }
+    .pricing-main .pricing-installment { min-width: auto; }
+    .pricing-footer { -webkit-flex-direction: column; flex-direction: column; -webkit-align-items: flex-start; align-items: flex-start; gap: 12px; padding: 24px 28px; }
+    .ciclo-badge { margin-left: 0; }
+    footer { -webkit-flex-direction: column; flex-direction: column; gap: 36px; text-align: center; padding: 48px 24px; padding-bottom: calc(48px + env(safe-area-inset-bottom)); }
+    .footer-meta { text-align: center; }
+    .footer-center { position: static; -webkit-transform: none; transform: none; }
+    .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-logo"><span>AQUILES</span> &nbsp;·&nbsp; MD Talk</div>
+  <ul class="nav-links">
+    <li><a href="#diagnostico">Diagnóstico</a></li>
+    <li><a href="#protocolo">O Protocolo</a></li>
+    <li><a href="#formato">Formato</a></li>
+    <li><a href="#investimento">Investimento</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">MD Talk &nbsp;·&nbsp; Instituto MD Talk</p>
+  <h1 class="hero-title">Aq<em>ui</em>les</h1>
+  <div class="hero-subtitle-row">
+    <div class="rule-line"></div>
+    <p class="hero-subtitle">High-Yield Intervention &nbsp;·&nbsp; 2026</p>
+    <div class="rule-line"></div>
+  </div>
+  <p class="hero-descriptor">A intervenção definitiva para romper a película do nível intermediário e alinhar o seu inglês à sua autoridade médica.</p>
+  <div class="hero-scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- INTRO / CONCEITO -->
+<section id="conceito">
+  <div class="conceito-grid">
+    <div class="reveal">
+      <div class="section-label">Sobre o programa</div>
+      <h2 class="conceito-heading">Você não é<br>um iniciante.<br><em>O problema<br>é outro.</em></h2>
+    </div>
+    <div class="conceito-body reveal reveal-delay-2">
+      <p>Se você já atende pacientes, lê artigos no PubMed com fluidez e sobrevive a congressos internacionais, o seu vocabulário técnico é vasto e o seu raciocínio clínico é impecável.</p>
+      <p>No entanto, quando chega a hora de apresentar um case report, conduzir uma anamnese delicada ou passar o plantão, você sente que o seu inglês não reflete o tamanho da sua competência.</p>
+      <p>Você trava. O cérebro busca atalhos e traduz as estruturas diretamente do português. Você não está regredindo — você apenas atingiu o temido <strong style="color: var(--pure-white); font-weight: 400;">Platô do Intermediário.</strong></p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PLATO BAND -->
+<div class="plato-band" id="diagnostico">
+  <div class="plato-band-inner">
+    <div class="reveal">
+      <div class="plato-label-large">Platô</div>
+      <div class="plato-label-sub">O Diagnóstico</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p class="plato-definition">
+        No aprendizado de um idioma, o platô é a fase em que o aluno consegue se comunicar e "sobreviver", mas se recusa inconscientemente a abandonar as estruturas básicas. É uma espécie de <strong>película invisível</strong>: você enxerga a fluência do outro lado, mas não consegue atravessar. Na medicina, estar preso nesse platô tem um preço altíssimo. A falta de precisão gramatical não é apenas uma falha de estilo — <strong>é um risco clínico e médico-legal.</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- CONSEQUENCES -->
+<div class="consequences-grid reveal">
+  <div class="consequence-card">
+    <div class="consequence-vs">Precisão temporal</div>
+    <p class="consequence-text"><strong>A diferença entre</strong> relatar um sintoma que já acabou e um que continua até hoje.</p>
+  </div>
+  <div class="consequence-card">
+    <div class="consequence-vs">Responsabilidade legal</div>
+    <p class="consequence-text"><strong>A diferença entre</strong> explicar um risco cirúrgico hipotético e fazer uma promessa irreal de cura para a família.</p>
+  </div>
+  <div class="consequence-card">
+    <div class="consequence-vs">Autoridade clínica</div>
+    <p class="consequence-text"><strong>A diferença entre</strong> soar como um estudante inseguro e um especialista em domínio total da situação.</p>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- OS 13 PONTOS -->
+<div class="pontos-block" id="protocolo">
+  <div class="pontos-inner">
+    <div class="pontos-header">
+      <div class="reveal">
+        <div class="section-label">The AQUILES Protocol</div>
+        <h2 class="pontos-title">
+          <span>A Solução</span>
+          <em>13 pontos.</em><br>Uma ruptura.
+        </h2>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="pontos-body">Cursos de inglês tradicionais falham em tirar o médico desse platô porque tentam ensinar gramática de forma genérica e isolada. Médicos não têm tempo para isso — e generalismo não rompe platôs.</p>
+        <br>
+        <p class="pontos-body">O Projeto AQUILES foi construído a partir de mais de <strong style="color: var(--pure-white); font-weight: 400;">15 anos de experiência no ensino de inglês avançado</strong> para médicos falantes de português. Ao longo desse tempo, foram identificados os <strong style="color: var(--silver-pale); font-weight: 400;">13 pontos gramaticais e linguísticos estratégicos</strong> que atuam como os verdadeiros calcanhares de Aquiles do intermediário — os únicos que, quando atacados de forma cirúrgica, produzem a ruptura definitiva entre o inglês de sobrevivência e a comunicação clínica de alta performance.</p>
+        <br>
+        <p class="pontos-body">Esses 13 pontos não são revelados antecipadamente. Eles emergem do diagnóstico individual de cada aluno — porque a ordem e a ênfase dependem de quem você é e de onde está travando.</p>
+      </div>
+    </div>
+
+    <div class="pontos-numero reveal">13</div>
+
+    <div class="pontos-manifesto reveal reveal-delay-1">
+      <div class="manifesto-item">
+        <div class="manifesto-num">01</div>
+        <div class="manifesto-text">
+          <strong>Mapeados ao longo de mais de 15 anos</strong>
+          de atuação exclusiva com médicos de alta performance em inglês avançado.
+        </div>
+      </div>
+      <div class="manifesto-item">
+        <div class="manifesto-num">02</div>
+        <div class="manifesto-text">
+          <strong>Aplicados de forma cirúrgica e individual</strong>
+          sempre ancorados na realidade hospitalar, científica e pessoal de cada aluno.
+        </div>
+      </div>
+      <div class="manifesto-item">
+        <div class="manifesto-num">03</div>
+        <div class="manifesto-text">
+          <strong>Os únicos que separam o B2 do C1</strong>
+          — o inglês de sobrevivência da comunicação clínica que reflete a sua autoridade médica.
+        </div>
+      </div>
+      <div class="manifesto-item">
+        <div class="manifesto-num">04</div>
+        <div class="manifesto-text">
+          <strong>Não são divulgados antecipadamente</strong>
+          — a sequência e o foco são definidos pelo diagnóstico individual de cada aluno.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- FORMATO -->
+<div class="formato-section" id="formato">
+  <div class="formato-inner">
+    <div class="section-label reveal">Formato do programa</div>
+    <div class="formato-grid">
+      <div class="formato-left reveal reveal-delay-1">
+        <h2 class="formato-lead">Não é um curso contínuo. É uma <em>intervenção cirúrgica.</em></h2>
+        <p class="formato-body">Sem enrolação. Sem regras inúteis. É o protocolo exato para romper de vez a película do intermediário, erradicar a interferência do português e assumir o controle total da comunicação clínica em inglês.</p>
+      </div>
+      <div class="formato-specs reveal reveal-delay-2">
+        <div class="spec-item">
+          <div class="spec-tag">Pré-requisito</div>
+          <div class="spec-content"><strong>Nível B2+ obrigatório</strong>Programa avançado, não indicado para iniciantes.</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-tag">Avaliação</div>
+          <div class="spec-content"><strong>Prova de nivelamento + entrevista</strong>Diagnóstico individual obrigatório antes do acesso.</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-tag">Modalidade</div>
+          <div class="spec-content"><strong>High-Yield</strong>Protocolo de alto rendimento, auto-instrucional.</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-tag">Bônus</div>
+          <div class="spec-content"><strong>3 sessões via Google Meet</strong>Orientação e prática, agendáveis em até 6 meses após a compra.</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-tag">Agendamento</div>
+          <div class="spec-content"><strong>Máximo 1 encontro por semana</strong>Dentro da janela de 6 meses.</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-tag">Produzido por</div>
+          <div class="spec-content"><strong>Instituto MD Talk</strong>+ The Engine Lab</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- INVESTIMENTO -->
+<div class="investment-section" id="investimento">
+  <div class="investment-inner">
+    <div class="investment-header">
+      <div class="reveal">
+        <div class="section-label">Investimento</div>
+        <h2 class="investment-title">Banking<br>&amp; Settlement</h2>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="investment-note">Valores e condições vigentes para o Ciclo de 2026. Acesso liberado imediatamente após confirmação do pagamento.</p>
+        <div class="ciclo-standalone">
+          <div class="ciclo-dot"></div>
+          <span>Ciclo 2026 &nbsp;·&nbsp; Valores em vigor</span>
+          <div class="ciclo-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-board reveal">
+      <div class="pricing-main">
+        <div>
+          <div class="pricing-label">Valor à vista · Acesso completo</div>
+          <div class="pricing-value">R$ 4.000</div>
+          <div class="pricing-period">pagamento único</div>
+        </div>
+        <div class="pricing-installment">
+          <div class="inst-label">Parcelado</div>
+          <div class="inst-value">até 10×</div>
+          <div class="inst-detail">Com juros</div>
+        </div>
+      </div>
+      <div class="pricing-footer">
+        <div class="liberacao-badge">
+          <div class="liberacao-dot"></div>
+          <span>Liberação imediata</span>
+        </div>
+        <div class="ciclo-badge">
+          <span>Ciclo 2026 &nbsp;·&nbsp; Valores em vigor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="banking-row reveal reveal-delay-1">
+      <div class="banking-cell">
+        <div class="banking-text"><strong>Credit Card</strong>Cartão de crédito</div>
+      </div>
+      <div class="banking-cell">
+        <div class="banking-text"><strong>PIX</strong>Transferência instantânea</div>
+      </div>
+      <div class="banking-cell">
+        <div class="banking-text"><strong>Wire Transfer</strong>Transferência bancária</div>
+      </div>
+    </div>
+
+    <div class="estorno-notice reveal reveal-delay-2">
+      <div class="notice-line"></div>
+      <p>Política de não reembolso: em razão da natureza digital e do acesso imediato ao conteúdo, <strong style="color: var(--silver-light); font-weight: 400;">não há possibilidade de estorno</strong> após a confirmação do pagamento.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo reveal">AQUILES</div>
+  <div class="footer-center reveal reveal-delay-2">
+    <div class="footer-center-line"></div>
+    <div class="footer-md">MD Talk</div>
+  </div>
+  <div class="footer-meta reveal reveal-delay-3">
+    <div class="footer-author">Thaiana Martignoni Faria</div>
+    <div class="footer-taglines">
+      Executive Medical Communication in English<br>
+      High-Performance Linguistics
+    </div>
+  </div>
+</footer>
+
+<script>
+  var nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  function setVh() {
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  setVh();
+  window.addEventListener('resize', setVh, { passive: true });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(function(el) { el.classList.add('hidden'); });
+    function revealEl(el) { el.classList.remove('hidden'); }
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) { revealEl(entry.target); observer.unobserve(entry.target); }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+      reveals.forEach(function(el) { observer.observe(el); });
+    } else {
+      reveals.forEach(revealEl);
+    }
+    setTimeout(function() {
+      document.querySelectorAll('.reveal.hidden').forEach(revealEl);
+    }, 3000);
+  });
+</script>
+</body>
+</html>
